@@ -63,8 +63,6 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           build-args: CONSUL_TEMPLATE_VERSION=${{ steps.version.outputs.version }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
