@@ -62,8 +62,7 @@ jobs:
         with:
           file: Dockerfile
           platforms: linux/amd64
-          push: false
-          load: true
+          push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: CONSUL_TEMPLATE_VERSION=${{ steps.version.outputs.version }}
