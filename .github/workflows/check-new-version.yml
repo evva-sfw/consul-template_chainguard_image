@@ -1,4 +1,4 @@
-name: Check consul-template Version
+name: Check_consulTemplate_Version
 
 on:
   # schedule:
@@ -37,3 +37,4 @@ jobs:
         if: ${{ steps.versions.outputs.newVersionAvailable != 1 }}
         run: |
           echo "No new version available ${{ steps.versions.outputs.newVersionAvailable }} ${{ steps.versions.outputs.local }} >= ${{ steps.versions.outputs.consulTemplate }}"
+          exit 1 # This has to fail so the triggered docker workflow can check the conclusion of this one https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
