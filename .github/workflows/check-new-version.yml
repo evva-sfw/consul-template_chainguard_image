@@ -1,0 +1,31 @@
+name: Check consul-template Version
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '15 5 * * 1' # min hour day month dow
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: get versions
+        id: versions
+        run: |
+          local=$(curl  "https://api.github.com/repos/evva-sfw/consul-template_chainguard_image/tags" | jq -r '.[0].name')
+          consulTemplate=$(curl  "https://api.github.com/repos/hashicorp/consul-template/tags" | jq -r '.[0].name')
+          echo "local=$local" >> "$GITHUB_OUTPUT"
+          echo "consulTemplate=$consulTemplate" >> "$GITHUB_OUTPUT"
+      - name: New version available
+        if: ${{ steps.versions.outputs.local < steps.versions.outputs.consulTemplate }}
+        run: |
+          echo 'new version available'
+      - name: No new version available
+        if: ${{ steps.versions.outputs.local >= steps.versions.outputs.consulTemplate }}
+        run: |
+          echo 'No new version available'
