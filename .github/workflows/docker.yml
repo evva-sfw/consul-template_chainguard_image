@@ -49,10 +49,12 @@ jobs:
         uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # v5.6.1
         with:
           images: |
-            name=ghcr.io/${GITHUB_REPOSITORY}
+            name=ghcr.io/consul-template
           tags: |
-            type=raw,value=${{ steps.version.outputs.version }}
-            type=raw,value=latest
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Build and push image
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991 # v6.13.0
         with:
