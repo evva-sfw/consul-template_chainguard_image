@@ -17,15 +17,18 @@ jobs:
       - name: get versions
         id: versions
         run: |
+          set +e
           local=$(curl  "https://api.github.com/repos/evva-sfw/consul-template_chainguard_image/tags" | jq -r '.[0].name')
           consulTemplate=$(curl  "https://api.github.com/repos/hashicorp/consul-template/tags" | jq -r '.[0].name')
           # Strip the "v" from version string
           consulTemplate="${consulTemplate:1}"
           echo "local=$local" >> "$GITHUB_OUTPUT"
           echo "consulTemplate=$consulTemplate" >> "$GITHUB_OUTPUT"
-          $(dpkg --compare-versions "$local" lt "$consulTemplate")
+          set +e
+          $(dpkg --compare-versions "$local" lt "$consulTemplate") # This exits with non 0 if it is not true
           # get exit code from previous cmd
           newVersionAvailable=$?
+          set -e
           # invert: so 1 = new version and 0 = no new version
           ((newVersionAvailable ^= 1))
           echo "newVersionAvailable=$newVersionAvailable" >> "$GITHUB_OUTPUT"
