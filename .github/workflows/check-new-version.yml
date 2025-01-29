@@ -19,13 +19,21 @@ jobs:
         run: |
           local=$(curl  "https://api.github.com/repos/evva-sfw/consul-template_chainguard_image/tags" | jq -r '.[0].name')
           consulTemplate=$(curl  "https://api.github.com/repos/hashicorp/consul-template/tags" | jq -r '.[0].name')
+          # Strip the "v" from version string
+          consulTemplate="${consulTemplate:1}"
           echo "local=$local" >> "$GITHUB_OUTPUT"
           echo "consulTemplate=$consulTemplate" >> "$GITHUB_OUTPUT"
+          $(dpkg --compare-versions "$local" lt "$consulTemplate")
+          # get exit code from previous cmd
+          newVersionAvailable=$?
+          # invert: so 1 = new version and 0 = no new version
+          ((newVersionAvailable ^= 1))
+          echo "newVersionAvailable=$newVersionAvailable" >> "$GITHUB_OUTPUT"
       - name: New version available
-        if: ${{ steps.versions.outputs.local < steps.versions.outputs.consulTemplate }}
+        if: ${{ steps.versions.outputs.newVersionAvailable == 1 }}
         run: |
-          echo 'new version available'
+          echo "new version available ${{ steps.versions.outputs.newVersionAvailable }} ${{ steps.versions.outputs.local }} < ${{ steps.versions.outputs.consulTemplate }}"
       - name: No new version available
-        if: ${{ steps.versions.outputs.local >= steps.versions.outputs.consulTemplate }}
+        if: ${{ steps.versions.outputs.newVersionAvailable != 1 }}
         run: |
-          echo 'No new version available'
+          echo "No new version available ${{ steps.versions.outputs.newVersionAvailable }} ${{ steps.versions.outputs.local }} >= ${{ steps.versions.outputs.consulTemplate }}"
