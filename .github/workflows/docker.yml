@@ -1,0 +1,41 @@
+# Template https://github.com/immich-app/immich/blob/main/.github/workflows/cli.yml
+name: Docker
+
+on:
+  workflow_call:
+    inputs:
+      consulTemplateVersion:
+        required: true
+        type: string
+
+permissions:
+  packages: write
+
+jobs:
+  publish:
+    name: Docker Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        # Only run when no fork
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push image
+        # Disable this step
+        if: false
+        uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991 # v6.13.0
+        with:
+          file: Dockerfile
+          platforms: linux/amd64
+          push: true
+          build-args:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          sbom: true
