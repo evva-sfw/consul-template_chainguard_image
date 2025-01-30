@@ -15,3 +15,5 @@ RUN apt-get update && apt-get install unzip && \
 FROM cgr.dev/chainguard/static:latest
 
 COPY --from=build --chown=65532:65532 --chmod=550 /bin/consul-template /bin/consul-template
+
+ENTRYPOINT ["/bin/consul-template"]
