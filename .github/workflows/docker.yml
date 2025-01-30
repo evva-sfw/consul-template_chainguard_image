@@ -65,3 +65,5 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           sbom: true
+          provenance: mode=max
+          attests: type=sbom,generator=image
