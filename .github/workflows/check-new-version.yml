@@ -35,7 +35,7 @@ jobs:
           echo "new version available ${{ steps.versions.outputs.newVersionAvailable }} ${{ steps.versions.outputs.local }} < ${{ steps.versions.outputs.consulTemplate }}"
           echo "${{ steps.versions.outputs.consulTemplate }}" > version.txt
       - name: Upload Artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: ${{ steps.versions.outputs.newVersionAvailable == 1 }}
         with:
           name: version
