@@ -1,5 +1,5 @@
 ## Build Image
-FROM ubuntu:24.04 AS build
+FROM ubuntu:26.04 AS build
 # Install consul-template
 ARG CONSUL_TEMPLATE_VERSION
 # Pickup consul-template
